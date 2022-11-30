@@ -6,6 +6,7 @@ import base64
 # Obtiene la tupla de la conexion: connection y cursor
 def get_connection_cursor_tuple():
     connection = None
+    cursor = None
     try:
         params = config()
         print('Connecting to the PostgreSQL database...')

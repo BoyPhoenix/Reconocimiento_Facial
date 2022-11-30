@@ -21,5 +21,21 @@ def face():
         "Result": Result
     })
 
+@app.route("/update", methods=["POST"])
+def update():
+    imagefile = request.files["image"]
+    pers_id = request.form["pers_id"]
+    filename =  utils.secure_filename(imagefile.filename)
+    namefile = "./" + filename
+    imagefile.save(namefile)
+    connection ,cursor = Query.get_connection_cursor_tuple()
+    Result = Query.update_photo(connection,cursor,namefile,pers_id)
+    print(Result)
+    os.remove(namefile)
+    return jsonify({
+        #Image has been changed
+        "Result": "La imagen ha sido cambiada"
+    })
+
 if __name__ == "__main__":
     app.run(debug=True,port=4040)
