@@ -6,6 +6,7 @@ import base64
 # Obtiene la tupla de la conexion: connection y cursor
 def get_connection_cursor_tuple():
     connection = None
+    cursor = None
     try:
         params = config()
         print('Connecting to the PostgreSQL database...')
@@ -27,11 +28,14 @@ def get_b64(path):
 # (Connection,Cursor) -> Tupla de conexion de la base de datos
 # file_name -> Nombre de la foto (path)
 # pers_id -> ID de la persona en la base de datos
-def update_photo(connection, cursor, file_name, pers_id):
+def update_photo(connection, cursor, file_name, pers_doc):
+    queryid = "Select pers_id from reconocer.persona WHERE pers_documento = %s"
     query = "UPDATE reconocer.personafoto SET pefo_imagen = %s WHERE pers_id = %s"
     image = (get_b64(file_name))
     imageD = image.decode("utf-8")
     try:
+        cursor.execute(queryid,(pers_doc,))
+        (pers_id,) = cursor.fetchone()
         cursor.execute(query,(imageD,pers_id))
         connection.commit()  # commit the changes to the database is advised for big files, see documentation
         count = cursor.rowcount # check that the images were all successfully added
@@ -43,12 +47,15 @@ def update_photo(connection, cursor, file_name, pers_id):
 # Toma la imagen de una persona en la base de datos
 # Cursor -> Conexion a la base de datos
 # pers_id -> ID de la persona en la base datos
-def select_photo(cursor,pers_id):
+def select_photo(cursor,pers_doc):
+    queryid = "Select pers_id from reconocer.persona WHERE pers_documento = %s"
     query = "SELECT pefo_imagen FROM reconocer.personafoto WHERE pers_id = %s"
     try:
+        cursor.execute(queryid,(pers_doc,))
+        (pers_id) = cursor.fetchone()
         cursor.execute(query,(pers_id,))
         (photo,) = cursor.fetchone()
-        print ("Records has been extracted successfully into table")
+        print("Records has been extracted successfully into table")
         return photo
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
