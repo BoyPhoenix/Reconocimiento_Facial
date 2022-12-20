@@ -12,7 +12,8 @@ public interface DocenteClaseRepository extends JpaRepository<DocenteClaseModel,
             "from reconocer.persona as p, reconocer.docente as d, " +
             "reconocer.docenteclase as dc " +
             "where p.pers_id = d.pers_id and dc.doce_id = d.doce_id and " +
-            "p.pers_documento = ?1 and d.doce_estado = 'ACTIVO' ", nativeQuery = true)
+            "p.pers_documento = ?1 and d.doce_estado = 'ACTIVO' and " +
+            "dc.dia_id=date_part('dow',current_date)", nativeQuery = true)
     List<DocenteClaseModel> buscarPorDocumento(String documento);
 
 }

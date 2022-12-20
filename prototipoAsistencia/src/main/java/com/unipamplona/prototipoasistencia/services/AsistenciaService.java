@@ -47,7 +47,11 @@ public class AsistenciaService {
                 return a1.compareToIgnoreCase(a2);
             }
         });
-
+        for (int i = 0; i < asis.size(); i++) {
+            if (asis.get(i).getAsis_id()!=0){
+                asis.get(i).getEstudiante().setPresente(true);
+            }
+        }
         return asis;
     }
 
